@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -14,7 +14,9 @@ import {
   Text,
   useColorScheme,
   View,
+  TextInput
 } from 'react-native';
+import { KeyboardInsetsView, getEdgeInsetsForView } from '@sdcx/keyboard-insets'
 
 import {
   Colors,
@@ -28,7 +30,7 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function Section({ children, title }: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -59,6 +61,7 @@ function App(): React.JSX.Element {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex:1
   };
 
   /*
@@ -78,33 +81,47 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <KeyboardInsetsView
+      style={{ flex: 1 }}
+        // style={{ backgroundColor: 'orange'}}
+        onKeyboard={(status) => {
+          console.log(`onKeyboard status: ${JSON.stringify(status)}`)
+        }}>
+        <ScrollView
+          style={backgroundStyle}>
+          <View style={{ paddingRight: safePadding }}>
+            <Header />
+          </View>
+          <View
+            style={{
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
+              paddingHorizontal: safePadding,
+              paddingBottom: safePadding,
+            }}>
+            <Section title="Step One">
+              Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+              screen and then come back to see your edits.
+            </Section>
+            <Section title="See Your Changes">
+              <ReloadInstructions />
+            </Section>
+            <Section title="Debug">
+              <DebugInstructions />
+            </Section>
+            <Section title="Learn More">
+              Read the docs to discover what to do next:
+            </Section>
+            <LearnMoreLinks />
+          </View>
+           <TextInput
+          style={styles.inputBar}
+          multiline
+          placeholder='写点什么吧'
+
+          maxLength={200}
+        />
+        </ScrollView>
+      </KeyboardInsetsView>
     </View>
   );
 }
@@ -117,6 +134,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
+  },
+  inputBar: {
+    flex: 1,
+    height: 80,
+    fontSize: 13,
+    paddingVertical: 0,
+    color: '#333333'
   },
   sectionDescription: {
     marginTop: 8,
